@@ -1,4 +1,4 @@
-package cmdutil
+package cli
 
 import (
 	"github.com/spf13/cobra"
@@ -40,7 +40,7 @@ func WithSubcommands(sub ...*Command) Option {
 	}
 }
 
-func New(opts ...Option) *Command {
+func NewCommand(opts ...Option) *Command {
 	c := &Command{}
 
 	for _, opt := range opts {

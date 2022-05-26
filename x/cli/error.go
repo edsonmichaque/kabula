@@ -1,4 +1,4 @@
-package cmdutil
+package cli
 
 type Error struct {
 	ExitCode int
