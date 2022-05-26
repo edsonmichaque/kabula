@@ -22,6 +22,7 @@ func New(name string) error {
 			libcmd.New(libcmd.WithHandler(CmdFetch)),
 			libcmd.New(libcmd.WithHandler(CmdBuild)),
 			libcmd.New(libcmd.WithHandler(CmdInit)),
+			libcmd.New(libcmd.WithHandler(CmdInfo)),
 		),
 	)
 
