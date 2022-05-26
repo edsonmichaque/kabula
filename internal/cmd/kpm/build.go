@@ -18,6 +18,7 @@ func CmdBuild() *cobra.Command {
 		debug   bool
 		profile string
 		yes     bool
+		sign    bool
 	}
 
 	cmd := &cobra.Command{
@@ -97,6 +98,7 @@ func CmdBuild() *cobra.Command {
 	cmd.Flags().BoolVar(&flags.debug, "debug", false, "")
 	cmd.Flags().BoolVarP(&flags.yes, "yes", "y", false, "")
 	cmd.Flags().StringVar(&flags.profile, "profile", "", "")
+	cmd.Flags().BoolVarP(&flags.sign, "sign", "", false, "")
 
 	return cmd
 }

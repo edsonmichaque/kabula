@@ -6,12 +6,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CmdInstall() *cobra.Command {
+func CmdPush() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "install",
+		Use:  "push",
 		Args: cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("install")
+			fmt.Println("push")
 			return nil
 		},
 	}
