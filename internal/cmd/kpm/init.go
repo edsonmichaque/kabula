@@ -1,6 +1,7 @@
 package kpm
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -13,8 +14,8 @@ import (
 
 func CmdInit() *cobra.Command {
 	var flags struct {
-		answersDir   bool
-		questionsDir bool
+		xml  bool
+		json bool
 	}
 
 	cmd := &cobra.Command{
@@ -29,7 +30,12 @@ func CmdInit() *cobra.Command {
 				return err
 			}
 
-			manifestPath := filepath.Join(args[0], "manifest.json")
+			ext := "json"
+			if flags.xml {
+				ext = "xml"
+			}
+
+			manifestPath := filepath.Join(args[0], fmt.Sprintf("manifest.%s", ext))
 			f, err := os.Create(manifestPath)
 			if err != nil {
 				return err
@@ -72,9 +78,17 @@ func CmdInit() *cobra.Command {
 				},
 			}
 
-			data, err := xml.MarshalIndent(m, "", "    ")
-			if err != nil {
-				return err
+			var data []byte
+			if flags.xml {
+				data, err = xml.MarshalIndent(m, "", "    ")
+				if err != nil {
+					return err
+				}
+			} else {
+				data, err = json.MarshalIndent(m, "", "    ")
+				if err != nil {
+					return err
+				}
 			}
 
 			if _, err := f.Write(data); err != nil {
@@ -85,8 +99,8 @@ func CmdInit() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVar(&flags.answersDir, "answers-dir", false, "answers dir")
-	cmd.Flags().BoolVar(&flags.questionsDir, "questions-dir", false, "answers dir")
+	cmd.Flags().BoolVar(&flags.xml, "xml", false, "use XML format")
+	cmd.Flags().BoolVar(&flags.json, "json", true, "use JSON format")
 
 	return cmd
 }

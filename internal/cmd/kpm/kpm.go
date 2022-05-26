@@ -1,28 +1,30 @@
 package kpm
 
 import (
-	"github.com/edsonmichaque/libcmd"
+	cmdutil "github.com/edsonmichaque/kabula/kabula-cmdutil"
 	"github.com/spf13/cobra"
 )
 
 func New(name string) error {
-	cmd := libcmd.New(
-		libcmd.WithHandler(func() *cobra.Command {
+	cmd := cmdutil.New(
+		cmdutil.WithHandler(func() *cobra.Command {
 			return &cobra.Command{
-				Use: name,
+				Use:           name,
+				SilenceErrors: true,
+				SilenceUsage:  true,
 			}
 		}),
-		libcmd.WithSubcommands(
-			libcmd.New(libcmd.WithHandler(CmdConfigure)),
-			libcmd.New(libcmd.WithHandler(CmdInstall)),
-			libcmd.New(libcmd.WithHandler(CmdUpdate)),
-			libcmd.New(libcmd.WithHandler(CmdRemove)),
-			libcmd.New(libcmd.WithHandler(CmdList)),
-			libcmd.New(libcmd.WithHandler(CmdSearch)),
-			libcmd.New(libcmd.WithHandler(CmdFetch)),
-			libcmd.New(libcmd.WithHandler(CmdBuild)),
-			libcmd.New(libcmd.WithHandler(CmdInit)),
-			libcmd.New(libcmd.WithHandler(CmdInfo)),
+		cmdutil.WithSubcommands(
+			cmdutil.New(cmdutil.WithHandler(CmdConfigure)),
+			cmdutil.New(cmdutil.WithHandler(CmdInstall)),
+			cmdutil.New(cmdutil.WithHandler(CmdUpdate)),
+			cmdutil.New(cmdutil.WithHandler(CmdRemove)),
+			cmdutil.New(cmdutil.WithHandler(CmdList)),
+			cmdutil.New(cmdutil.WithHandler(CmdSearch)),
+			cmdutil.New(cmdutil.WithHandler(CmdFetch)),
+			cmdutil.New(cmdutil.WithHandler(CmdBuild)),
+			cmdutil.New(cmdutil.WithHandler(CmdInit)),
+			cmdutil.New(cmdutil.WithHandler(CmdInfo)),
 		),
 	)
 
