@@ -3,6 +3,7 @@ module github.com/edsonmichaque/kabula
 go 1.18
 
 require (
+	github.com/edsonmichaque/libcmd v0.0.0-20220525221404-70a5802d4463 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/spf13/cobra v1.4.0 // indirect
