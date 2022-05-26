@@ -8,8 +8,9 @@ import (
 
 func CmdInstall() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "install",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "install",
+		Short: "installs kabula package",
+		Args:  cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("install")
 			return nil

@@ -14,8 +14,9 @@ func CmdSearch() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:  "search",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "search",
+		Short: "searches for kabula packages",
+		Args:  cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("search")
 			return nil

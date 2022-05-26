@@ -8,8 +8,9 @@ import (
 
 func CmdPush() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "push",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "push",
+		Short: "uploads kabula package to the repo",
+		Args:  cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("push")
 			return nil

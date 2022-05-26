@@ -14,8 +14,9 @@ func CmdRemove() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:  "remove",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "remove",
+		Short: "removes installed kabula packages",
+		Args:  cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("remove")
 			return nil

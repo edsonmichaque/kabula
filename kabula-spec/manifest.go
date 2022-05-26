@@ -3,7 +3,7 @@ package spec
 import "encoding/xml"
 
 const (
-	PkgExt = "kpm"
+	PkgExt = "kab"
 )
 
 type Manifest struct {

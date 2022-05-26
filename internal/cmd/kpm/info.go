@@ -1,8 +1,7 @@
 package kpm
 
 import (
-	"fmt"
-
+	"github.com/edsonmichaque/kabula/archive"
 	"github.com/spf13/cobra"
 )
 
@@ -14,11 +13,11 @@ func CmdInfo() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:  "info",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "info",
+		Short: "installs kabula package",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("info")
-			return nil
+			return archive.Info(args[0])
 		},
 	}
 

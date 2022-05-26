@@ -14,8 +14,9 @@ func CmdFetch() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:  "fetch",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "fetch",
+		Short: "downloads kabula package",
+		Args:  cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("fetch")
 			return nil

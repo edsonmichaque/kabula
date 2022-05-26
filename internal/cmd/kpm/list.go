@@ -14,8 +14,9 @@ func CmdList() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:  "list",
-		Args: cobra.MaximumNArgs(0),
+		Use:   "list",
+		Short: "list installed kabula packages",
+		Args:  cobra.MaximumNArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("list")
 			return nil
