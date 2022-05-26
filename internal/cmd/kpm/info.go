@@ -3,7 +3,7 @@ package kpm
 import (
 	"fmt"
 
-	"github.com/edsonmichaque/kabula/x/archive"
+	"github.com/edsonmichaque/kabula/x/kab"
 	"github.com/spf13/cobra"
 )
 
@@ -17,20 +17,20 @@ func CmdInfo() *cobra.Command {
 		Short: "installs kabula package",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts, err := archive.Info(args[0])
+			opts, err := kab.Info(args[0])
 			if err != nil {
 				return err
 			}
 
-			if opts.Container == archive.Tar {
+			if opts.Container == kab.Tar {
 				fmt.Println("container format tar")
 			}
 
-			if opts.Container == archive.Zip {
+			if opts.Container == kab.Zip {
 				fmt.Println("container format zip")
 			}
 
-			if opts.Container == archive.Gzip {
+			if opts.Container == kab.Gzip {
 				fmt.Println("container format gzip")
 			}
 

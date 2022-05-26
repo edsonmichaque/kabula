@@ -1,4 +1,4 @@
-package archive
+package kab
 
 import (
 	"archive/tar"
@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 
 	"github.com/edsonmichaque/kabula/x/spec"
+	"github.com/klauspost/compress/zstd"
 )
 
 type Options struct {
@@ -97,6 +98,10 @@ func Build(target string, args Options) error {
 		build = buildZip
 	}
 
+	if args.Container == Zstd {
+		build = buildZstd
+	}
+
 	if err := build(target, dst, dirEntries); err != nil {
 		return err
 	}
@@ -148,6 +153,16 @@ func buildTgz(target string, dst io.WriteCloser, entries []fs.FileInfo) error {
 	defer gw.Close()
 
 	return buildTar(target, gw, entries)
+}
+
+func buildZstd(target string, dst io.WriteCloser, entries []fs.FileInfo) error {
+	zw, err := zstd.NewWriter(dst)
+	if err != nil {
+		return err
+	}
+	defer zw.Close()
+
+	return buildTar(target, zw, entries)
 }
 
 func buildZip(target string, dst io.WriteCloser, entries []fs.FileInfo) error {

@@ -1,7 +1,7 @@
 package kpm
 
 import (
-	"github.com/edsonmichaque/kabula/x/archive"
+	"github.com/edsonmichaque/kabula/x/kab"
 	"github.com/spf13/cobra"
 )
 
@@ -12,6 +12,7 @@ func CmdBuild() *cobra.Command {
 		zip  bool
 		tar  bool
 		gzip bool
+		zstd bool
 	}
 
 	cmd := &cobra.Command{
@@ -19,24 +20,27 @@ func CmdBuild() *cobra.Command {
 		Short: "builds a kabula",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opt := archive.DefaultOptions
+			opts := []kab.KabOption{}
+
 			if flags.xml {
-				opt.Content = archive.FormatXML
+				opts = append(opts, kab.WithXML())
 			}
 
 			if flags.zip {
-				opt.Container = archive.Zip
-			}
-
-			if flags.tar {
-				opt.Container = archive.Tar
+				opts = append(opts, kab.WithZip())
 			}
 
 			if flags.gzip {
-				opt.Container = archive.Gzip
+				opts = append(opts, kab.WithGZip())
 			}
 
-			return archive.Build(args[0], opt)
+			if flags.zstd {
+				opts = append(opts, kab.WithZStd())
+			}
+
+			k := kab.NewKab(args[0], opts...)
+
+			return k.Init()
 		},
 	}
 
@@ -44,7 +48,7 @@ func CmdBuild() *cobra.Command {
 	cmd.Flags().BoolVarP(&flags.sign, "sign", "s", false, "")
 	cmd.Flags().BoolVarP(&flags.zip, "zip", "z", false, "zip")
 	cmd.Flags().BoolVarP(&flags.gzip, "gzip", "g", false, "gzip")
-	cmd.Flags().BoolVarP(&flags.tar, "tar", "t", false, "tar")
+	cmd.Flags().BoolVar(&flags.zstd, "zstd", false, "zstd")
 
 	return cmd
 }

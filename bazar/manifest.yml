@@ -1,0 +1,19 @@
+version: 0.1.0
+name: bazar
+homepage: ""
+license: ""
+publisher:
+    name: ""
+    email: ""
+    url: ""
+creator:
+    name: ""
+    email: ""
+    url: ""
+depends: []
+replaces: []
+recommends: []
+suggests: []
+conflicts: []
+changelog: null
+signatures: null

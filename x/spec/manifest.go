@@ -7,7 +7,7 @@ const (
 )
 
 type Manifest struct {
-	XMLName    xml.Name      `json:"-" xml:"manifest"`
+	XMLName    xml.Name      `json:"-" yaml:"-" xml:"manifest"`
 	Version    string        `json:"version,omitempty" xml:"version,omitempty"`
 	Name       string        `json:"name,omitempty" xml:"name,omitempty"`
 	Homepage   string        `json:"homepage,omitempty" xml:"homepage,omitempty"`

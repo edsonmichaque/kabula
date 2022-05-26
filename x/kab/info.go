@@ -1,4 +1,4 @@
-package archive
+package kab
 
 import (
 	"bytes"
@@ -23,6 +23,7 @@ const (
 	Gzip
 	KindBZip2
 	Tar
+	Zstd
 )
 
 type ContentFormat int

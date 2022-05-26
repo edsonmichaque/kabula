@@ -1,15 +1,15 @@
 package kpm
 
 import (
-	"github.com/edsonmichaque/kabula/x/archive"
+	"github.com/edsonmichaque/kabula/x/kab"
 	"github.com/spf13/cobra"
 )
 
 func CmdInit() *cobra.Command {
 	var flags struct {
-		xml     bool
-		json    bool
-		version string
+		xml  bool
+		json bool
+		yaml bool
 	}
 
 	cmd := &cobra.Command{
@@ -17,19 +17,25 @@ func CmdInit() *cobra.Command {
 		Short: "create kabula package sources",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts := archive.DefaultOptions
+			opts := []kab.KabOption{}
 
 			if flags.xml {
-				opts.Content = archive.FormatXML
+				opts = append(opts, kab.WithXML())
 			}
 
-			return archive.New(args[0], opts)
+			if flags.yaml {
+				opts = append(opts, kab.WithYAML())
+			}
+
+			k := kab.NewKab(args[0], opts...)
+
+			return k.Init()
 		},
 	}
 
 	cmd.Flags().BoolVar(&flags.xml, "xml", false, "use XML format")
 	cmd.Flags().BoolVar(&flags.json, "json", true, "use JSON format")
-	cmd.Flags().StringVarP(&flags.version, "version", "V", "0.1.0", "version")
+	cmd.Flags().BoolVar(&flags.yaml, "yaml", true, "use YAML format")
 
 	return cmd
 }
