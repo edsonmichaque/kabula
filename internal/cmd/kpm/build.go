@@ -7,12 +7,11 @@ import (
 
 func CmdBuild() *cobra.Command {
 	var flags struct {
-		xml   bool
-		sign  bool
-		zip   bool
-		tar   bool
-		gzip  bool
-		bzip2 bool
+		xml  bool
+		sign bool
+		zip  bool
+		tar  bool
+		gzip bool
 	}
 
 	cmd := &cobra.Command{
@@ -20,17 +19,24 @@ func CmdBuild() *cobra.Command {
 		Short: "builds a kabula",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			archiveArgs := archive.DefaultArgs
-
+			opt := archive.DefaultOptions
 			if flags.xml {
-				archiveArgs.Content = archive.FormatXML
+				opt.Content = archive.FormatXML
 			}
 
 			if flags.zip {
-				archiveArgs.Container = archive.KindZip
+				opt.Container = archive.Zip
 			}
 
-			return archive.Build(args[0], archiveArgs)
+			if flags.tar {
+				opt.Container = archive.Tar
+			}
+
+			if flags.gzip {
+				opt.Container = archive.Gzip
+			}
+
+			return archive.Build(args[0], opt)
 		},
 	}
 
@@ -38,7 +44,7 @@ func CmdBuild() *cobra.Command {
 	cmd.Flags().BoolVarP(&flags.sign, "sign", "s", false, "")
 	cmd.Flags().BoolVarP(&flags.zip, "zip", "z", false, "zip")
 	cmd.Flags().BoolVarP(&flags.gzip, "gzip", "g", false, "gzip")
-	cmd.Flags().BoolVarP(&flags.bzip2, "bzip2", "b", false, "bzip2")
+	cmd.Flags().BoolVarP(&flags.tar, "tar", "t", false, "tar")
 
 	return cmd
 }

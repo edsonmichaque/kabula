@@ -11,7 +11,7 @@ import (
 	spec "github.com/edsonmichaque/kabula/kabula-spec"
 )
 
-func New(target string, args ArchiveArgs) error {
+func New(target string, args Options) error {
 	if err := os.Mkdir(target, 0755); err != nil {
 		if errors.Is(err, os.ErrExist) {
 			return fmt.Errorf("%s already exist", target)

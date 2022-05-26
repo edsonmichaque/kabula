@@ -17,13 +17,13 @@ func CmdInit() *cobra.Command {
 		Short: "create kabula package sources",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			archiveArgs := archive.DefaultArgs
+			opts := archive.DefaultOptions
 
 			if flags.xml {
-				archiveArgs.Content = archive.FormatXML
+				opts.Content = archive.FormatXML
 			}
 
-			return archive.New(args[0], archiveArgs)
+			return archive.New(args[0], opts)
 		},
 	}
 

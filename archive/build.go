@@ -3,6 +3,7 @@ package archive
 import (
 	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -14,49 +15,59 @@ import (
 	spec "github.com/edsonmichaque/kabula/kabula-spec"
 )
 
-type ArchiveArgs struct {
+type Options struct {
 	Content   ContentFormat
-	Container ArchiveFormat
+	Container ContainerFormat
 }
 
-var DefaultArgs = ArchiveArgs{
+var DefaultOptions = Options{
 	Content:   FormatJSON,
-	Container: KindGZip,
+	Container: Gzip,
 }
 
-func Build(target string, args ArchiveArgs) error {
-	ext := "json"
+type Builder func(string, io.WriteCloser, []fs.FileInfo) error
+
+const (
+	extXML       = "xml"
+	extJSON      = "json"
+	manifestPath = "manifest"
+)
+
+func Build(target string, args Options) error {
+	contentFormat := extJSON
 	if args.Content == FormatXML {
-		ext = "xml"
+		contentFormat = extXML
 	}
 
-	fullpath := filepath.Join(target, fmt.Sprintf("manifest.%s", ext))
+	fullpath := filepath.Join(target, fmt.Sprintf("%s.%s", manifestPath, contentFormat))
 	f, err := os.Open(fullpath)
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		_ = f.Close()
-	}()
+	defer f.Close()
 
 	data, err := io.ReadAll(f)
 	if err != nil {
 		return err
 	}
 
-	var m spec.Manifest
+	var manifestFile spec.Manifest
+
 	if args.Content == FormatXML {
-		if err := xml.Unmarshal(data, &m); err != nil {
-			return err
-		}
-	} else {
-		if err := json.Unmarshal(data, &m); err != nil {
+		if err := xml.Unmarshal(data, &manifestFile); err != nil {
 			return err
 		}
 	}
 
-	dst, err := os.Create(fmt.Sprintf("%s_%s.%s", m.Name, m.Version, spec.PkgExt+string(ext[0])))
+	if args.Content == FormatJSON {
+		if err := json.Unmarshal(data, &manifestFile); err != nil {
+			return err
+		}
+	}
+
+	dstPath := fmt.Sprintf("%s_%s.%s", manifestFile.Name, manifestFile.Version, spec.Ext+string(contentFormat[0]))
+	dst, err := os.Create(dstPath)
 	if err != nil {
 		return err
 	}
@@ -73,63 +84,76 @@ func Build(target string, args ArchiveArgs) error {
 		return err
 	}
 
-	if args.Container == KindTar {
-		if err := BuildTar(target, dst, dirEntries); err != nil {
-			return err
-		}
+	var build Builder
+	if args.Container == Tar {
+		build = buildTar
 	}
 
-	if args.Container == KindZip {
-		if err := BuildZip(target, dst, dirEntries); err != nil {
-			return err
-		}
+	if args.Container == Gzip {
+		build = buildTgz
+	}
+
+	if args.Container == Zip {
+		build = buildZip
+	}
+
+	if err := build(target, dst, dirEntries); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func BuildTar(target string, dst io.WriteCloser, l []fs.FileInfo) error {
-	writer := tar.NewWriter(dst)
-	defer writer.Close()
-	for _, e := range l {
-		if e.IsDir() {
+func buildTar(target string, dst io.WriteCloser, entries []fs.FileInfo) error {
+	tw := tar.NewWriter(dst)
+	defer tw.Close()
+
+	for _, entry := range entries {
+		if entry.IsDir() {
 			continue
 		}
 
-		c, err := os.Open(filepath.Join(target, e.Name()))
+		reader, err := os.Open(filepath.Join(target, entry.Name()))
 		if err != nil {
 			return err
 		}
 
-		entry, err := filepath.Rel(c.Name(), target)
+		relPath, err := filepath.Rel(reader.Name(), target)
 		if err != nil {
 			return err
 		}
 
-		if err := writer.WriteHeader(&tar.Header{
-			Name:     entry,
-			Size:     e.Size(),
-			Mode:     int64(e.Mode()),
-			ModTime:  e.ModTime(),
+		if err := tw.WriteHeader(&tar.Header{
+			Name:     relPath,
+			Size:     entry.Size(),
+			Mode:     int64(entry.Mode()),
+			ModTime:  entry.ModTime(),
 			Typeflag: tar.TypeReg,
 		}); err != nil {
 			return err
 		}
 
-		if _, err := io.Copy(writer, c); err != nil {
+		if _, err := io.Copy(tw, reader); err != nil {
 			return err
 		}
 
-		c.Close()
+		reader.Close()
 	}
 
 	return nil
 }
 
-func BuildZip(target string, dst io.WriteCloser, l []fs.FileInfo) error {
+func buildTgz(target string, dst io.WriteCloser, entries []fs.FileInfo) error {
+	gw := gzip.NewWriter(dst)
+	defer gw.Close()
+
+	return buildTar(target, gw, entries)
+}
+
+func buildZip(target string, dst io.WriteCloser, entries []fs.FileInfo) error {
 	writer := zip.NewWriter(dst)
 	defer writer.Close()
-	for _, e := range l {
+	for _, e := range entries {
 		if e.IsDir() {
 			continue
 		}

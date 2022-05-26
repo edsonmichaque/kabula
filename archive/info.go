@@ -15,14 +15,14 @@ var (
 	prefixTar  = []byte("\x00\x75\x73\x74\x61\x72")
 )
 
-type ArchiveFormat int
+type ContainerFormat int
 
 const (
-	KindUnknown ArchiveFormat = iota + 1
-	KindZip
-	KindGZip
+	KindUnknown ContainerFormat = iota + 1
+	Zip
+	Gzip
 	KindBZip2
-	KindTar
+	Tar
 )
 
 type ContentFormat int
@@ -32,45 +32,44 @@ const (
 	FormatXML
 )
 
-func Info(target string) error {
+func Info(target string) (*Options, error) {
 	head := make([]byte, 512)
 	if _, err := os.Stat(target); err != nil {
-		return err
+		return nil, err
 	}
 
 	f, err := os.Open(target)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
 	defer f.Close()
 
 	if _, err := io.ReadFull(f, head[:]); err != nil {
 		if err != io.ErrUnexpectedEOF {
 			log.Println("cannot read first bytes", err)
-			return nil
+			return nil, err
 		}
 	}
 
 	if isTar := bytes.HasPrefix(head[256:], prefixTar); isTar {
 		fmt.Printf("%s is a tar file", target)
-		return nil
+		return &Options{Container: Tar}, err
 	}
 
 	if isGzip := bytes.HasPrefix(head[:], prefixGzip); isGzip {
 		fmt.Printf("%s is a gzip file", target)
-		return nil
+		return &Options{Container: Gzip}, err
 	}
 
 	if isZip := bytes.HasPrefix(head[:], prefixZip); isZip {
 		fmt.Printf("%s is a zip file", target)
-		return nil
+		return &Options{Container: Zip}, err
 	}
 
-	return errors.New("unknown file format")
+	return nil, errors.New("unknown file format")
 }
 
-func DetectKind(target string) (ArchiveFormat, error) {
+func DetectKind(target string) (ContainerFormat, error) {
 	head := make([]byte, 512)
 	if _, err := os.Stat(target); err != nil {
 		return KindUnknown, err
@@ -90,15 +89,15 @@ func DetectKind(target string) (ArchiveFormat, error) {
 	}
 
 	if isTar := bytes.HasPrefix(head[256:], prefixTar); isTar {
-		return KindTar, nil
+		return Tar, nil
 	}
 
 	if isGzip := bytes.HasPrefix(head[:], prefixGzip); isGzip {
-		return KindGZip, nil
+		return Gzip, nil
 	}
 
 	if isZip := bytes.HasPrefix(head[:], prefixZip); isZip {
-		return KindZip, nil
+		return Zip, nil
 	}
 
 	return KindUnknown, nil
