@@ -12,7 +12,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/edsonmichaque/kabula/spec"
+	"github.com/edsonmichaque/kabula/x/spec"
 )
 
 type Options struct {

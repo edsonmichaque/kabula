@@ -1,7 +1,7 @@
 package kpm
 
 import (
-	cmdutil "github.com/edsonmichaque/kabula/cmdutil"
+	cmdutil "github.com/edsonmichaque/kabula/x/cmdutil"
 	"github.com/spf13/cobra"
 )
 

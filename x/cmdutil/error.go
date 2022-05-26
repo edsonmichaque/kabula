@@ -1,4 +1,4 @@
-package libcmd
+package cmdutil
 
 type Error struct {
 	ExitCode int

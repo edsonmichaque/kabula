@@ -1,4 +1,4 @@
-package libcmd
+package cmdutil
 
 import (
 	"github.com/spf13/cobra"

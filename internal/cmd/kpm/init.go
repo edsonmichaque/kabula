@@ -1,7 +1,7 @@
 package kpm
 
 import (
-	archive "github.com/edsonmichaque/kabula/archive"
+	"github.com/edsonmichaque/kabula/x/archive"
 	"github.com/spf13/cobra"
 )
 
