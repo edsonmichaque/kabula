@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/edsonmichaque/kabula/types"
+	spec "github.com/edsonmichaque/kabula/kabula-spec"
 	"github.com/spf13/cobra"
 )
 
@@ -39,12 +39,12 @@ func CmdBuild() *cobra.Command {
 				return err
 			}
 
-			var m types.Manifest
+			var m spec.Manifest
 			if err := json.Unmarshal(data, &m); err != nil {
 				return err
 			}
 
-			tarball, err := os.Create(fmt.Sprintf("%s_%s.%s", m.Name, m.Version, types.PkgExt))
+			tarball, err := os.Create(fmt.Sprintf("%s_%s.%s", m.Name, m.Version, spec.PkgExt))
 			if err != nil {
 				return err
 			}

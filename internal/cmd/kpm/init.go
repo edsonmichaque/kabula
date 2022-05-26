@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/edsonmichaque/kabula/types"
+	spec "github.com/edsonmichaque/kabula/kabula-spec"
 	"github.com/spf13/cobra"
 )
 
@@ -39,35 +39,35 @@ func CmdInit() *cobra.Command {
 				_ = f.Close()
 			}()
 
-			m := types.Manifest{
+			m := spec.Manifest{
 				Version: "0.1.0",
 				Name:    args[0],
-				Depends: []types.Requirement{
+				Depends: []spec.Requirement{
 					{
 						Package: "example.com/foo",
-						Version: types.Dependency{
+						Version: spec.Dependency{
 							Ge: "1.0.0",
 						},
 					},
 					{
 						Package: "example.com/bar",
-						Version: types.Dependency{
+						Version: spec.Dependency{
 							Eq: []string{"1.0.0", "1.0.1"},
 						},
 					},
 				},
-				Publisher: types.Author{
+				Publisher: spec.Author{
 					Name:  "Edson Michaque",
 					Email: "edson@michaque.com",
 				},
-				Creator: types.Author{
+				Creator: spec.Author{
 					Name:  "Edson Michaque",
 					Email: "edson@michaque.com",
 				},
-				Sig: &types.Sig{
+				Signatures: &spec.Signature{
 					Ref: "sig.json",
 				},
-				Changelog: &types.Changelog{
+				Changelog: &spec.Changelog{
 					Ref: "changelog.json",
 				},
 			}

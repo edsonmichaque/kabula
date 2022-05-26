@@ -1,4 +1,4 @@
-package types
+package spec
 
 type Option struct {
 	Ref   string       `json:"Ref,omitempty"`
