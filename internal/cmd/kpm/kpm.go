@@ -25,6 +25,7 @@ func New(name string) error {
 			cmdutil.New(cmdutil.WithHandler(CmdBuild)),
 			cmdutil.New(cmdutil.WithHandler(CmdInit)),
 			cmdutil.New(cmdutil.WithHandler(CmdInfo)),
+			cmdutil.New(cmdutil.WithHandler(CmdPush)),
 		),
 	)
 
