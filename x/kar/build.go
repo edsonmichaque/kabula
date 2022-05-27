@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/edsonmichaque/kabula/x/kar/builder.go"
+	"github.com/edsonmichaque/kabula/x/kar/builder"
 )
 
 type Options struct {
@@ -71,6 +71,9 @@ func (kar Kab) Build() error {
 	}
 
 	dst, err := kar.create(manifest)
+	if err != nil {
+		return err
+	}
 	defer dst.Close()
 
 	b := builders()

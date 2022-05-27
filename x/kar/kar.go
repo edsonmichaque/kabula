@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/edsonmichaque/kabula/x/kar/builder.go"
+	"github.com/edsonmichaque/kabula/x/kar/builder"
 	"github.com/edsonmichaque/kabula/x/spec"
 	"gopkg.in/yaml.v3"
 )

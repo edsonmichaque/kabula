@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"os"
+
+	"github.com/edsonmichaque/kabula/x/kar/reader"
 )
 
 func openArchive(target string) (*bytes.Buffer, error) {
@@ -46,7 +48,9 @@ func Info(target string) (*Options, error) {
 		return nil, err
 	}
 
-	m, err := tarReader(f, gzipReader)
+	r := reader.Tar(f, reader.GZip)
+
+	m, err := r(f)
 	if err != nil {
 		return nil, err
 	}
