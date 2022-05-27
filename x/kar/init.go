@@ -1,9 +1,10 @@
-package kab
+package kar
 
 import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/edsonmichaque/kabula/x/spec"
 )
@@ -21,23 +22,23 @@ func (k Kab) Init() error {
 		return err
 	}
 
-	dstFile, err := os.Create(k.ManifestPath())
+	karFile, err := os.Create(k.ManifestPath())
 	if err != nil {
 		return err
 	}
-	defer dstFile.Close()
+	defer karFile.Close()
 
 	manifest := spec.Manifest{
 		Version: InitialVersion,
-		Name:    k.src,
+		Name:    filepath.Base(k.src),
 	}
 
-	rawData, err := k.Marshal(manifest)
+	rawData, err := k.encode(manifest)
 	if err != nil {
 		return err
 	}
 
-	if _, err := dstFile.Write(rawData); err != nil {
+	if _, err := karFile.Write(rawData); err != nil {
 		return err
 	}
 

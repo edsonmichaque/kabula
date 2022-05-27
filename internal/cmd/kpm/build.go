@@ -1,18 +1,20 @@
 package kpm
 
 import (
-	"github.com/edsonmichaque/kabula/x/kab"
+	"github.com/edsonmichaque/kabula/x/kar"
 	"github.com/spf13/cobra"
 )
 
 func CmdBuild() *cobra.Command {
 	var flags struct {
-		xml  bool
-		sign bool
-		zip  bool
-		tar  bool
-		gzip bool
-		zstd bool
+		xml     bool
+		sign    bool
+		zip     bool
+		tar     bool
+		gzip    bool
+		zstd    bool
+		xz      bool
+		verbose bool
 	}
 
 	cmd := &cobra.Command{
@@ -20,27 +22,31 @@ func CmdBuild() *cobra.Command {
 		Short: "builds a kabula",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts := []kab.KabOption{}
-
-			if flags.xml {
-				opts = append(opts, kab.WithXML())
-			}
+			opts := []kar.KabOption{}
 
 			if flags.zip {
-				opts = append(opts, kab.WithZip())
+				opts = append(opts, kar.WithZip())
 			}
 
 			if flags.gzip {
-				opts = append(opts, kab.WithGZip())
+				opts = append(opts, kar.WithGZip())
 			}
 
 			if flags.zstd {
-				opts = append(opts, kab.WithZStd())
+				opts = append(opts, kar.WithZStd())
 			}
 
-			k := kab.NewKab(args[0], opts...)
+			if flags.xz {
+				opts = append(opts, kar.WithXZ())
+			}
 
-			return k.Init()
+			if flags.verbose {
+				opts = append(opts, kar.WithLogs())
+			}
+
+			k := kar.New(args[0], opts...)
+
+			return k.Build()
 		},
 	}
 
@@ -49,6 +55,8 @@ func CmdBuild() *cobra.Command {
 	cmd.Flags().BoolVarP(&flags.zip, "zip", "z", false, "zip")
 	cmd.Flags().BoolVarP(&flags.gzip, "gzip", "g", false, "gzip")
 	cmd.Flags().BoolVar(&flags.zstd, "zstd", false, "zstd")
+	cmd.Flags().BoolVar(&flags.xz, "xz", false, "xz")
+	cmd.Flags().BoolVar(&flags.verbose, "verbose", false, "verbose")
 
 	return cmd
 }
