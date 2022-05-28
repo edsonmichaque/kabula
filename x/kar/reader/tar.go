@@ -89,14 +89,30 @@ func Tar(dst io.Reader, fn Decompress) func(r io.Reader) (map[string][]byte, err
 				continue
 			}
 
-			buf := new(bytes.Buffer)
-			if _, err := io.Copy(buf, tr); err != nil {
+			rawBuf := new(bytes.Buffer)
+			if _, err := io.Copy(rawBuf, tr); err != nil {
 				if err != io.EOF {
 					return nil, err
 				}
 			}
 
-			files[header.Name] = buf.Bytes()
+			compressedBuf := new(bytes.Buffer)
+			zr, err := zstd.NewWriter(compressedBuf)
+			if err != nil {
+				return nil, err
+			}
+
+			if _, err := io.Copy(zr, rawBuf); err != nil {
+				if err != io.EOF {
+					return nil, err
+				}
+			}
+
+			if err := zr.Close(); err != nil {
+				return nil, err
+			}
+
+			files[header.Name] = compressedBuf.Bytes()
 		}
 
 		return files, nil
@@ -122,12 +138,28 @@ func Zip(dst io.Reader) (map[string][]byte, error) {
 			return nil, err
 		}
 
-		var buf bytes.Buffer
-		if _, err := io.Copy(&buf, r); err != nil {
+		rawBuf := new(bytes.Buffer)
+		if _, err := io.Copy(rawBuf, r); err != nil {
 			return nil, err
 		}
 
-		files[f.Name] = buf.Bytes()
+		compressedBuf := new(bytes.Buffer)
+		zr, err := zstd.NewWriter(compressedBuf)
+		if err != nil {
+			return nil, err
+		}
+
+		if _, err := io.Copy(zr, rawBuf); err != nil {
+			if err != io.EOF {
+				return nil, err
+			}
+		}
+
+		if err := zr.Close(); err != nil {
+			return nil, err
+		}
+
+		files[f.Name] = compressedBuf.Bytes()
 	}
 
 	return files, nil
